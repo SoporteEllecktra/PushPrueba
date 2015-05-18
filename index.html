@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Demo</title>
+</head>
+<body>
+<script type="text/javascript" src="cordova.js"> </script>
+<script type="text/javascript" src="PushNotification.js"></script>
+<script type="text/javascript">
+var pushNotification;
+
+function onDeviceReady(){
+	alert('onDeviceReady');
+    pushNotification = window.plugins.pushNotification;
+    try { 
+		pushNotification.register(successHandler, errorHandler,{"senderID":"970066199992","ecb":"onNotification"});
+	} catch(err) { 
+		var txt="There was an error on this page.\n\n"; 
+		txt+="Error description: " + err.message + "\n\n"; 
+		alert(txt);
+	}
+	 var element = document.getElementById('deviceProperties');
+        element.innerHTML = 'Device Model: '    + device.model    + '<br />' +
+                            'Device Cordova: '  + device.cordova  + '<br />' +
+                            'Device Platform: ' + device.platform + '<br />' +
+                            'Device UUID: '     + device.uuid     + '<br />' +
+                            'Device Version: '  + device.version  + '<br />';
+	
+}
+
+// result contains any message sent from the plugin call
+
+
+function successHandler (result) {
+    alert('Callback Success! Result = '+result);
+}
+
+function errorHandler (error) {
+    alert(error);
+}
+ function onNotification(e) {
+	alert('onNotification');
+        switch( e.event )
+        {
+            case 'registered':
+                if ( e.regid.length > 0 )
+                {
+                    console.log("Regid " + e.regid);
+					
+					document.getElementById("txtClave").value = e.regid;
+                    alert('registration id = '+e.regid);
+                }
+            break;
+ 
+            case 'message':
+              // this is the actual push notification. its format depends on the data model from the push server
+              alert('message = '+e.message+' msgcnt = '+e.msgcnt);
+            break;
+ 
+            case 'error':
+              alert('GCM error = '+e.msg);
+            break;
+ 
+            default:
+              alert('An unknown GCM event has occurred');
+             // break;
+        }
+    }
+	
+	document.addEventListener('deviceready', onDeviceReady, true);
+</script>
+<div id="home">
+  <div id="app-status-div">
+    <ul id="app-status-ul">
+      <li>AeroGear PushPlugin Unified Push Demo</li>
+    </ul>
+  </div>
+  <div>
+  <input type="text" id="txtClave" style="width:400px;height:250px;" />
+  </div>
+  <div id="deviceProperties"></div>
+</div>
+</body>
+</html>
